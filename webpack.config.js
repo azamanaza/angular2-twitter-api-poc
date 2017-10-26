@@ -1,14 +1,19 @@
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var path = require('path');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
 
-    entry: './angular-app/main.ts',
+    entry: {
+        polyfills: './angular-app/polyfills.ts',
+        vendor: './angular-app/vendor.ts',
+        app: './angular-app/main.ts'
+    },
     output: {
         publicPath: '',
         path: path.resolve(__dirname, './dist'),
-        filename: 'app.bundle.js'
+        filename: "[name].js",
     },
     module: {
         loaders: [
@@ -19,8 +24,56 @@ module.exports = {
                     'awesome-typescript-loader?{tsconfig: "tsconfig.json"}'
                 ]
             },
-            { test: /\.css$/, loaders: ['to-string-loader', 'css-loader'] },
-            { test: /\.html$/, loader: 'raw-loader' }
+            {
+                test: /\.css$/,
+                exclude: [/app(\\|\/)/],
+                use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: [
+                        {
+                            loader: "css-loader",
+                            options: {
+                                import: true,
+                                url: true,
+                                minimize: true,
+                                sourceMap: true
+                            }
+                        }
+                    ]
+                })
+            },
+            {
+                test: /\.css$/,
+                include: [/app(\\|\/)/],
+                loader: "raw-loader"
+            },
+            {
+                test: /\.css\.map$/,
+                loader: "file-loader",
+                options: {
+                    name: "[name].[hash].[ext]"
+                }
+            },
+            { test: /\.html$/, loader: 'raw-loader' },
+            {
+                test: /\.(eot(\?)?|ico(\?)?|otf(\?)?|ttf(\?)?|woff(\?)?|woff2(\?)?)/,
+                loader: "file-loader",
+                options: {
+                    name: "assets/[name].[ext]"
+                }
+            },
+            {
+                test: /\.(gif|jpe?g|png|svg(\?)?)$/,
+                use: [
+                    {
+                        loader: "file-loader",
+                        options: {
+                            name: "assets/[name].[ext]"
+                        }
+                    }
+                ]
+
+            }
         ]
     },
     resolve: {
@@ -38,6 +91,13 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './angular-app/index.html'
         }),
+        new webpack.ProvidePlugin({
+            jQuery: 'jquery',
+            $: 'jquery',
+            jquery: 'jquery',
+            Popper: ['popper.js', 'default']
+        }),
+        new ExtractTextPlugin("[name].css"),
         new webpack.DefinePlugin({
             app: {
                 environment: JSON.stringify(process.env.APP_ENVIRONMENT || 'development')
