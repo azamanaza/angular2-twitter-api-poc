@@ -3,12 +3,18 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-module.exports = {
+var angularConfig = {
 
     entry: {
         polyfills: './angular-app/polyfills.ts',
         vendor: './angular-app/vendor.ts',
         app: './angular-app/main.ts'
+    },
+    devServer: {
+        host: "local.twitter",
+        port: 3000,
+        compress: true,
+        inline: false
     },
     output: {
         publicPath: '',
@@ -105,3 +111,5 @@ module.exports = {
         })
     ]
 };
+
+module.exports = [angularConfig];

@@ -1,11 +1,19 @@
 <div class="container">
     <div class="row">
-        <input [(ngModel)]="userDisplayName" name="user-display-name" type="text">
-        <button (click)="fetchTweets()" class="btn btn-sm">Search</button>
+        <div class="col-sm-12">
+            <input [(ngModel)]="userDisplayName" name="user-display-name" type="text">
+            <button (click)="fetchTweets()" class="btn btn-sm">Search</button>
+        </div>
     </div>
     <div class="row">
-        <div *ngFor="let tweet of getUserTweets()" class="col-sm-4">
-            {{ tweet | json }}
+        <div *ngFor="let tweet of getUserTweets()" class="col-sm-12 col-lg-3 col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">{{tweet.user.name}}</h4>
+                    <h6 class="card-subtitle mb-2 text-muted">{{tweet.created_at}}</h6>
+                    <p class="card-text">{{tweet.text}}</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
