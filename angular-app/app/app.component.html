@@ -1,0 +1,7 @@
+<div>
+    <input [(ngModel)]="userDisplayName" name="user-display-name" type="text">
+    <button (click)="fetchTweets()" class="btn btn-sm">Search</button>
+</div>
+<div *ngFor="let tweet of getUserTweets()">
+    {{ tweet | json }}
+</div>
